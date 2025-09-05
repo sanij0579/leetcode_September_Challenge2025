@@ -1,0 +1,36 @@
+Sort a linked list of 0s, 1s and 2s
+Solution:
+class Solution:
+    def segregate(self, head):
+        if not head or not head.next:
+            return head
+        
+        # Dummy nodes for 0, 1, 2 lists
+        zeroD = Node(-1)
+        oneD = Node(-1)
+        twoD = Node(-1)
+        
+        # Tails for three lists
+        zero, one, two = zeroD, oneD, twoD
+        
+        # Traverse original list
+        curr = head
+        while curr:
+            if curr.data == 0:
+                zero.next = curr
+                zero = zero.next
+            elif curr.data == 1:
+                one.next = curr
+                one = one.next
+            else:
+                two.next = curr
+                two = two.next
+            curr = curr.next
+        
+        # Merge lists: zero -> one -> two
+        zero.next = oneD.next if oneD.next else twoD.next
+        one.next = twoD.next
+        two.next = None
+        
+        # Return new head
+        return zeroD.next
