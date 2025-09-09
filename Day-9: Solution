@@ -1,0 +1,39 @@
+2327. Number of People Aware of a Secret
+Solution:
+class Solution:
+    def peopleAwareOfSecret(self, total_days: int, share_delay: int, forget_delay: int) -> int:
+        MOD = 10**9 + 7
+        
+        # If there's only one day, only 1 person knows the secret
+        if total_days == 1:
+            return 1
+
+        # dp[i] = number of people who learn the secret on day i
+        dp = [0] * (total_days + 1)
+        dp[1] = 1  # On day 1, one person knows the secret
+
+        active_sharers = 0  # People who can currently share the secret
+
+        for day in range(2, total_days + 1):
+            # When people become eligible to share the secret
+            start_sharing_day = day - share_delay
+
+            # When people forget the secret
+            stop_sharing_day = day - forget_delay
+
+            # Add new sharers who now become eligible
+            if start_sharing_day >= 1:
+                active_sharers = (active_sharers + dp[start_sharing_day]) % MOD
+
+            # Remove people who forgot the secret
+            if stop_sharing_day >= 1:
+                active_sharers = (active_sharers - dp[stop_sharing_day] + MOD) % MOD
+
+            # People who learn the secret today
+            dp[day] = active_sharers
+
+        # Calculate total people who still remember the secret at the end
+        start_day = max(1, total_days - forget_delay + 1)
+        total_people = sum(dp[start_day: total_days + 1]) % MOD
+        
+        return total_people
