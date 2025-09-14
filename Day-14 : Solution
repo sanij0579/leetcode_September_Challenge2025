@@ -1,0 +1,35 @@
+966. Vowel Spellchecker
+
+Solution:
+from typing import List
+
+class Solution:
+    def spellchecker(self, wordlist: List[str], queries: List[str]) -> List[str]:
+        # Step 1: Preprocess wordlist
+        exact_words = set(wordlist)
+        
+        case_map = {}
+        vowel_map = {}
+        
+        vowels = set("aeiou")
+
+        def devowel(word: str) -> str:
+            return "".join('*' if c in vowels else c for c in word.lower())
+        
+        for word in wordlist:
+            lower = word.lower()
+            case_map.setdefault(lower, word)   # first occurrence
+            vowel_map.setdefault(devowel(lower), word)  # first occurrence
+
+        # Step 2: Process queries
+        result = []
+        for q in queries:
+            if q in exact_words:   # Rule 1
+                result.append(q)
+            elif q.lower() in case_map:   # Rule 2
+                result.append(case_map[q.lower()])
+            elif devowel(q) in vowel_map:   # Rule 3
+                result.append(vowel_map[devowel(q)])
+            else:
+                result.append("")   # No match
+        return result
