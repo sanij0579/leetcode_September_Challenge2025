@@ -1,0 +1,12 @@
+1935. Maximum Number of Words You Can Type
+Solution:
+class Solution:
+    def canBeTypedWords(self, text: str, brokenLetters: str) -> int:
+        broken = set(brokenLetters)   # O(26) max
+        count = 0
+
+        for word in text.split():
+            if all(ch not in broken for ch in word):
+                count += 1
+
+        return count
