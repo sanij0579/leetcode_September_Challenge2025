@@ -1,0 +1,39 @@
+3408. Design Task Manager
+Solution:
+
+import heapq
+from typing import List
+
+class TaskManager:
+
+    def __init__(self, tasks: List[List[int]]):
+        self.task_map = {}  # taskId -> (userId, priority)
+        self.heap = []
+        for userId, taskId, priority in tasks:
+            self.task_map[taskId] = (userId, priority)
+            heapq.heappush(self.heap, (-priority, -taskId, taskId))
+
+    def add(self, userId: int, taskId: int, priority: int) -> None:
+        self.task_map[taskId] = (userId, priority)
+        heapq.heappush(self.heap, (-priority, -taskId, taskId))
+
+    def edit(self, taskId: int, newPriority: int) -> None:
+        if taskId in self.task_map:
+            userId, _ = self.task_map[taskId]
+            self.task_map[taskId] = (userId, newPriority)
+            heapq.heappush(self.heap, (-newPriority, -taskId, taskId))
+
+    def rmv(self, taskId: int) -> None:
+        if taskId in self.task_map:
+            del self.task_map[taskId]  # lazy removal (heap still has it, but ignored later)
+
+    def execTop(self) -> int:
+        while self.heap:
+            priority, neg_taskId, taskId = heapq.heappop(self.heap)
+            if taskId in self.task_map:  # valid task
+                userId, current_priority = self.task_map[taskId]
+                # Ensure heap entry matches latest priority
+                if -priority == current_priority:
+                    del self.task_map[taskId]  # remove after executing
+                    return userId
+        return -1
