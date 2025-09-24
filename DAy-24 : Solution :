@@ -1,0 +1,50 @@
+166. Fraction to Recurring Decimal
+Solution:
+class Solution:
+    def fractionToDecimal(self, numerator: int, denominator: int) -> str:
+        # quick zero check
+        if numerator == 0:
+            return "0"
+
+        # determine sign
+        sign = '-' if (numerator < 0) ^ (denominator < 0) else ''
+
+        # work with absolute values to avoid negative remainder issues
+        n = abs(numerator)
+        d = abs(denominator)
+
+        # integer part
+        int_part = n // d
+        remainder = n % d
+
+        # start result with sign and integer part
+        result = sign + str(int_part)
+
+        # if exact division, return integer part only
+        if remainder == 0:
+            return result
+
+        # fractional part
+        result += '.'
+        decimal_digits = []
+        seen = {}
+
+        pos = 0
+        while remainder != 0:
+          
+            if remainder in seen:
+                start = seen[remainder]
+                non_repeat = ''.join(decimal_digits[:start])
+                repeat = ''.join(decimal_digits[start:])
+                return result + non_repeat + '(' + repeat + ')'
+
+            seen[remainder] = pos
+
+            remainder *= 10
+            digit = remainder // d
+            decimal_digits.append(str(digit))
+            remainder %= d
+            pos += 1
+
+        # no repeating cycle
+        return result + ''.join(decimal_digits)
